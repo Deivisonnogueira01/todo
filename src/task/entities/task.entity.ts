@@ -11,7 +11,7 @@ export class Task {
   status: string;
 
 
-  @OneToMany(() => User, (user) => user.task)
+  /*@OneToMany(() => User, (user) => user.task)
   user: User;
   /*@OneToOne( () => user)
   user: User;*/
