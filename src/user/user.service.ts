@@ -15,27 +15,33 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
+
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+
   //-----------------------------------------------------------------------------------------------
   async create(createUserDto: CreateUserDto) {
     createUserDto.confirmationToken = crypto.randomBytes(32).toString('hex');
     createUserDto.salt = await bcrypt.genSalt();
-    //console.log(salt);
+   
     createUserDto.password = await this.hashPassword(
       createUserDto.password,
       createUserDto.salt,
     );
-    // console.log(createUserDto.password);
+    
 
     try {
       await this.usersRepository.save(createUserDto);
+
       delete createUserDto.password;
       delete createUserDto.salt;
+
       return createUserDto;
+
     } catch (error) {
+      
       if (error.code.toString() === '23505') {
         throw new ConflictException('Endereço de email já está em uso');
       } else {

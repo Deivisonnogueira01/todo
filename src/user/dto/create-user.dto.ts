@@ -1,3 +1,5 @@
+import { CreateTaskDto } from "src/task/dto/create-task.dto";
+
 export class CreateUserDto {
   id: string;
 
@@ -18,4 +20,6 @@ export class CreateUserDto {
   createAt: Date;
 
   updateAt: Date;
+
+  task: CreateTaskDto;
 }
