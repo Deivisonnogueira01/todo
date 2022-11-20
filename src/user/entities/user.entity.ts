@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('tbl_user')
+@Entity('tbl_aluno')
 export class User {
 
   @PrimaryGeneratedColumn('uuid')
@@ -30,8 +30,6 @@ export class User {
   @Column()
   confirmationToken: string;
 
-  @Column({ nullable: false })
-  salt: string;
 
   @CreateDateColumn()
   createAt: Date;
@@ -44,7 +42,7 @@ export class User {
 
 
   async checkPassword(password: string): Promise<boolean> {
-    const hash = await bcrypt.hash(password, this.salt);
+    const hash = await bcrypt.hash(password);
     return hash === this.password;
   }
 }

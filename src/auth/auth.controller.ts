@@ -14,7 +14,6 @@ import { User } from 'src/user/entities/user.entity';
 import { AuthService } from './auth.service';
 import { GetUser } from './get-user.decorator';
 
-//npm i --save passport passport-jwt @nestjs/jwt @nestjs/passport
 
 @Controller('auth')
 export class AuthController {

@@ -15,8 +15,6 @@ export class CreateUserDto {
 
   confirmationToken: string;
 
-  salt: string;
-
   createAt: Date;
 
   updateAt: Date;

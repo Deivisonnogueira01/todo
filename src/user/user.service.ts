@@ -21,25 +21,15 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) {}
 
-  //-----------------------------------------------------------------------------------------------
   async create(createUserDto: CreateUserDto) {
     createUserDto.confirmationToken = crypto.randomBytes(32).toString('hex');
-    createUserDto.salt = await bcrypt.genSalt();
-   
     createUserDto.password = await this.hashPassword(
       createUserDto.password,
-      createUserDto.salt,
     );
-    
-
     try {
       await this.usersRepository.save(createUserDto);
-
       delete createUserDto.password;
-      delete createUserDto.salt;
-
       return createUserDto;
-
     } catch (error) {
       
       if (error.code.toString() === '23505') {
@@ -51,34 +41,7 @@ export class UserService {
       }
     }
   }
-  //----------------------------------------------------------------------------
-  private async hashPassword(password: string, salt: string): Promise<string> {
-    return bcrypt.hash(password, salt);
-  }
-  //----------------------------------------------------------------------------
-  async findAll(): Promise<User[]> {
-    try {
-      return await this.usersRepository.find();
-    } catch (err) {
-      console.log('Impossível buscar usuários');
-      return null;
-    }
-  }
-  //----------------------------------------------------------------------------
-  async findOne(id: string): Promise<User> {
-    const user = this.usersRepository
-      .createQueryBuilder('user')
-      .select(['user.nome', 'user.email'])
-      .getOne();
-    if (!user) throw new NotFoundException('Usuário não encontrado');
 
-    return user;
-  }
-  //----------------------------------------------------------------------------
-  async findByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ email });
-  }
-  //----------------------------------------------------------------------------
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
     const { nome, email, status } = updateUserDto;
@@ -94,7 +57,7 @@ export class UserService {
       );
     }
   }
-  //----------------------------------------------------------------------------
+
   async remove(userId: string) {
     const result = await this.usersRepository.delete({ id: userId });
     if (result.affected === 0) {
@@ -103,7 +66,36 @@ export class UserService {
       );
     }
   }
-  //----------------------------------------------------------------------------
+
+
+  private async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password);
+  }
+
+ 
+  async findAll(): Promise<User[]> {
+    try {
+      return await this.usersRepository.find();
+    } catch (err) {
+      console.log('Impossível buscar usuários');
+      return null;
+    }
+  }
+  
+  async findOne(id: string): Promise<User> {
+    const user = this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.nome', 'user.email'])
+      .getOne();
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return await this.usersRepository.findOneBy({ email });
+  }
+
   async checkCredentials(credentialsDto: CredentialsDto): Promise<User> {
     const { email, password } = credentialsDto;
     let user = new User();
@@ -115,5 +107,6 @@ export class UserService {
       return null;
     }
   }
-  //----------------------------------------------------------------------------
+
+  
 }

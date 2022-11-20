@@ -11,7 +11,7 @@ export class Task {
   id: string;
 
   @Column()
-  name: string;
+  description: string;
   
   @Column()
   status: string;
